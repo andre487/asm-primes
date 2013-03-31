@@ -8,7 +8,8 @@ extern _scanf
 extern _malloc
 extern _free
 
-SECTION .text
+SECTION .text 
+align 4
 _main:
 	enter 0, 0
 	
@@ -49,6 +50,7 @@ _main:
 	%include "functions.asm"
 
 SECTION .data
+	align 4
 	max_number: dd 0
 	primes_pointer: dd 0
 	

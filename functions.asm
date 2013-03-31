@@ -24,6 +24,7 @@ input_max_number:
 	mov eax, [max_number]
 	cmp eax, MIN_MAX_NUMBER
 	jb .number_too_little
+
 	cmp eax, MAX_MAX_NUMBER
 	ja .number_too_big
 	jmp .success
@@ -69,8 +70,7 @@ allocate_flags_memory:
 	mov byte [eax+1], 0
 	
 	cld
-	mov edi, eax
-	add edi, 2
+	lea edi, [eax+2]
 	mov edx, [max_number]
 	add edx, eax
 	
@@ -109,15 +109,13 @@ free_flags_memory:
 	
 ;Найти простые числа с помощью решета Эратосфена
 find_primes_with_eratosthenes_sieve:
-	enter 8, 1
+	enter 4, 1
 	
 	mov eax, [primes_pointer]
 	mov ebx, [max_number]
 	
 	mov [ebp-4], eax
-	add eax, ebx
-	inc eax
-	mov [ebp-8], eax
+	lea eax, [ebx+1]
 	
 	;вычеркиваем составные числа
 	cld
@@ -146,8 +144,7 @@ find_primes_with_eratosthenes_sieve:
 			add esi, edx
 			inc esi
 			
-			mov ecx, edx
-			inc ecx
+			lea ecx, [edx+1]
 			.check_current_number:
 				mov eax, ecx
 				mul eax
@@ -161,8 +158,7 @@ find_primes_with_eratosthenes_sieve:
 				jmp .check_current_number
 			
 				.new_p_found:
-					mov edx, ecx
-					dec edx
+					lea edx, [ecx-1]
 					mov ecx, 2
 					jmp .strike_out_cycle			
 	
@@ -177,15 +173,13 @@ print_primes_sum:
 
 	cld
 	mov eax, [primes_pointer]
-	mov esi, eax
-	add esi, 2 ;начинаем проверку с адреса, по которому флаг числа 2
+	lea esi, [eax+2] ;начинаем проверку с адреса, по которому флаг числа 2
 
-	mov edx, eax
+	lea edx, [eax+1]
 	add edx, [max_number]
-	inc edx
 
-	mov ebx, 0
-	mov edi, 0
+	xor ebx, ebx
+	xor edi, edi
 	mov ecx, 2
 	.sum_cycle:
 		lodsb
