@@ -1,31 +1,27 @@
 ;
 ;
 ; ФУНКЦИИ
-; Результат записывается в EAX, статус - в EDX.
+; Cтатус выполнения записывается в EDX.
 ; В случае успеха EDX содержит значение SUCCESS (0),
 ; инчае - адрес сообщения об ошибке.
 ;
 ;
 
 ; Ввести максимальное число
-; Результат: EAX - максимальное число
-input_max_number:	
+; Результат записывается в переменную max_number
+input_max_number:
 	;создать стек-фрейм,
-	;4 байта для локальных переменных
-	enter 4, 1
+	;0 байт для локальных переменных
+	enter 0, 1
 
 	;вызываем scanf
-	mov eax, ebp
-	sub eax, 4
-
-	push eax
+	push max_number
 	push str_unsigned_int_format ;см. string_constants.asm
 	call _scanf
 	add esp, 8
-
-	mov eax, [ebp-4]
-
+	
 	;проверка
+	mov eax, [max_number]
 	cmp eax, MIN_MAX_NUMBER
 	jb .number_too_little
 	cmp eax, MAX_MAX_NUMBER
@@ -50,14 +46,14 @@ input_max_number:
 
 
 ; Выделить память для массива флагов
-; Аргумент: EAX - максимальное число
-; Результат: EAX - указатель на память
+; Результат, указатель на массив флагов, 
+; записывается в переменную primes_pointer
 allocate_flags_memory:
-	enter 8, 1
+	enter 0, 1
 
-	;выделить EAX+1 байт
+	;выделить max_number+1 байт
+	mov eax, [max_number]
 	inc eax
-	mov [ebp-4], eax
 	
 	push eax
 	call _malloc
@@ -66,15 +62,16 @@ allocate_flags_memory:
 	;проверка
 	cmp eax, 0
 	je .fail
-	mov [ebp-8], eax
+	mov [primes_pointer], eax
 	
 	;инициализация
 	mov byte [eax], 0
+	mov byte [eax+1], 0
 	
 	cld
 	mov edi, eax
-	inc edi
-	mov edx, [ebp-4]
+	add edi, 2
+	mov edx, [max_number]
 	add edx, eax
 	
 	mov al, 1
@@ -84,7 +81,6 @@ allocate_flags_memory:
 		jb .write_true
 	
 	;выход
-	mov eax, [ebp-8]
 	jmp .success
 	
 	.fail:
@@ -99,10 +95,10 @@ allocate_flags_memory:
 		ret
 
 ; Освободить память от массива флагов
-; Аргумент: EAX - указатель на память
 free_flags_memory:
 	enter 0, 1
 	
+	mov eax, [primes_pointer]
 	push eax
 	call _free
 	add esp, 4
@@ -112,11 +108,13 @@ free_flags_memory:
 	
 	
 ;Найти простые числа с помощью решета Эратосфена
-;Аргументы: EAX - указатель на массив флагов, EBX - максимальное число	
 find_primes_with_eratosthenes_sieve:
 	enter 8, 1
+	
+	mov eax, [primes_pointer]
+	mov ebx, [max_number]
+	
 	mov [ebp-4], eax
-		
 	add eax, ebx
 	inc eax
 	mov [ebp-8], eax
@@ -128,9 +126,9 @@ find_primes_with_eratosthenes_sieve:
 	.strike_out_cycle:
 		;x = c*p
 		mov eax, edx
-		push edx
+		mov esi, edx
 		mul ecx
-		pop edx
+		mov edx, esi
 		
 		cmp eax, ebx
 		jbe .strike_out_number
@@ -174,16 +172,16 @@ find_primes_with_eratosthenes_sieve:
 		
 
 ; Вывести простые числа
-; Параметры: EAX - указатель на массив флагов, EBX - максимальное число
 print_primes_sum:
 	enter 0, 1
 
 	cld
+	mov eax, [primes_pointer]
 	mov esi, eax
 	add esi, 2 ;начинаем проверку с адреса, по которому флаг числа 2
 
 	mov edx, eax
-	add edx, ebx
+	add edx, [max_number]
 	inc edx
 
 	mov ebx, 0

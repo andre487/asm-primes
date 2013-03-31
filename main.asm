@@ -16,27 +16,19 @@ _main:
 	call input_max_number
 	cmp edx, SUCCESS
 	jne .custom_exit
-	mov [max_number], eax
 	
 	;выделяем память для массива флагов
-	mov eax, [max_number]
 	call allocate_flags_memory
 	cmp edx, SUCCESS
 	jne .custom_exit
-	mov [primes_pointer], eax
 	
 	;отсеять составные числа
-	mov eax, [primes_pointer]
-	mov ebx, [max_number]
 	call find_primes_with_eratosthenes_sieve
 	
 	;вывести числа
-	mov eax, [primes_pointer]
-	mov ebx, [max_number]
 	call print_primes_sum
 	
 	;освободить память от массива флагов
-	mov eax, [primes_pointer]
 	call free_flags_memory
 	
 	;выход
