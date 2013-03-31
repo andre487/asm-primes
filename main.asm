@@ -33,7 +33,7 @@ _main:
 	;вывести числа
 	mov eax, [primes_pointer]
 	mov ebx, [max_number]
-	call print_primes
+	call print_primes_sum
 	
 	;освободить память от массива флагов
 	mov eax, [primes_pointer]

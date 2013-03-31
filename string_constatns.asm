@@ -1,10 +1,5 @@
-;подписи ввода-вывода, форматы
-str_max_number_label: db "Max number (>=3): ", 0
-str_max_number_input_format: db "%u", 0
-str_max_number_output_format: db "Using max number %u", 0xD, 0xA, 0
-
-str_print_primes_label: db "Primes:", 0xD, 0xA, 0
-str_prime: db "%u", 0x9, 0
+;форматы ввода-вывода
+str_number_format: db "%u", 0
 str_cr_lf: db 0xD, 0xA, 0
 	
 ;сообщения выхода

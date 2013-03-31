@@ -14,20 +14,15 @@ input_max_number:
 	;4 байта для локальных переменных
 	enter 4, 1
 
-	;показываем подпись
-	push str_max_number_label ;см. string_constants.asm
-	call _printf
-	add esp, 4
-
 	;вызываем scanf
 	mov eax, ebp
 	sub eax, 4
-	
+
 	push eax
-	push str_max_number_input_format ;см. string_constants.asm
+	push str_number_format ;см. string_constants.asm
 	call _scanf
 	add esp, 8
-	
+
 	mov eax, [ebp-4]
 
 	;проверка
@@ -47,11 +42,6 @@ input_max_number:
 		jmp .return	
 
 	.success:
-		push eax
-		push str_max_number_output_format ;см. string_constants.asm
-		call _printf
-		add esp, 4
-		pop eax
 		mov edx, SUCCESS
 	
 	.return:
@@ -185,41 +175,35 @@ find_primes_with_eratosthenes_sieve:
 
 ; Вывести простые числа
 ; Параметры: EAX - указатель на массив флагов, EBX - максимальное число
-print_primes:
-	enter 12, 1
-	mov [ebp-4], eax
-	mov [ebp-8], ebx
-	
-	push str_print_primes_label
-	call _printf
-	add esp, 4
+print_primes_sum:
+	enter 0, 1
 	
 	cld
-	mov esi, [ebp-4]
-	mov edx, esi
-	add edx, [ebp-8]
+	mov esi, eax
+	add esi, 2 ;начинаем проверку с адреса, по которому флаг числа 2
+	
+	mov edx, eax
+	add edx, ebx
 	inc edx
 	
-	mov [ebp-12], edx
-	mov ecx, 0
-	.print_cycle:
+	mov ebx, 0
+	mov ecx, 2
+	.sum_cycle:
 		lodsb
 		cmp al, 0
-		jne .print
+		jne .sum
 		jmp .check_finish
-		.print:
-			push esi
-			push ecx
-			push str_prime ;см. string_constants.asm
-			call _printf
-			add esp, 4
-			pop ecx
-			pop esi
-			mov edx, [ebp-12]
+		.sum:
+			add ebx, ecx
 		.check_finish:
 			inc ecx
 			cmp esi, edx
-			jb .print_cycle
+			jb .sum_cycle
+			
+	push ebx
+	push str_number_format ;см. string_constants.asm
+	call _printf
+	add esp, 8
 			
 	push str_cr_lf
 	call _printf
