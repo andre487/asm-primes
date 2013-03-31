@@ -19,7 +19,7 @@ input_max_number:
 	sub eax, 4
 
 	push eax
-	push str_number_format ;см. string_constants.asm
+	push str_unsigned_int_format ;см. string_constants.asm
 	call _scanf
 	add esp, 8
 
@@ -177,16 +177,17 @@ find_primes_with_eratosthenes_sieve:
 ; Параметры: EAX - указатель на массив флагов, EBX - максимальное число
 print_primes_sum:
 	enter 0, 1
-	
+
 	cld
 	mov esi, eax
 	add esi, 2 ;начинаем проверку с адреса, по которому флаг числа 2
-	
+
 	mov edx, eax
 	add edx, ebx
 	inc edx
-	
+
 	mov ebx, 0
+	mov edi, 0
 	mov ecx, 2
 	.sum_cycle:
 		lodsb
@@ -195,19 +196,21 @@ print_primes_sum:
 		jmp .check_finish
 		.sum:
 			add ebx, ecx
+			adc edi, 0
 		.check_finish:
 			inc ecx
 			cmp esi, edx
 			jb .sum_cycle
 			
+	push edi
 	push ebx
-	push str_number_format ;см. string_constants.asm
+	push str_unsigned_long_long_format ;см. string_constants.asm
 	call _printf
-	add esp, 8
-			
+	add esp, 12
+
 	push str_cr_lf
 	call _printf
 	add esp, 4
-			
+
 	leave
 	ret

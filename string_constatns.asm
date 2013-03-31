@@ -1,5 +1,6 @@
 ;форматы ввода-вывода
-str_number_format: db "%u", 0
+str_unsigned_int_format: db "%u", 0
+str_unsigned_long_long_format: db "%llu", 0
 str_cr_lf: db 0xD, 0xA, 0
 	
 ;сообщения выхода
