@@ -13,24 +13,28 @@ input_max_number:
 	enter 0, 1
 
 	; приглашение ко вводу максимального числа
-	push rbx
 	lea rdi, [rel str_msg_input_number]
+	push rbx
 	call _printf
 	pop rbx
 
 	; вызываем scanf
-	push rbx ; выравнивание стека
 	lea rdi, [rel str_unsigned_int_format] ; см. string_constants.asm
 	lea rsi, [rel max_number]
+	push rbx ; выравнивание стека
 	call _scanf
 	pop rbx
 
+	jo .number_too_big
+
 	; проверка
-	cmp rsi, MIN_MAX_NUMBER
+	mov rax, [rel max_number]
+	cmp rax, MIN_MAX_NUMBER
 	jb .number_too_little
 
 	cmp rax, MAX_MAX_NUMBER
 	ja .number_too_big
+
 	jmp .success
 
 	; выход
@@ -43,11 +47,18 @@ input_max_number:
 		jmp .return
 
 	.success:
+		lea rdi, [rel str_msg_max_number]
+		mov rsi, [rel max_number]
+		push rbx
+		call _printf
+		pop rbx
+
 		mov rdx, SUCCESS
 
 	.return:
 		leave
 		ret
+
 
 ; Выделить память для массива флагов
 ; Результат, указатель на массив флагов,
@@ -96,6 +107,7 @@ allocate_flags_memory:
 	.return:
 		leave
 		ret
+
 
 ; Освободить память от массива флагов
 free_flags_memory:
@@ -196,8 +208,6 @@ print_primes_sum:
 			inc rcx
 			cmp rsi, rdx
 			jb .sum_cycle
-
-	push rdi
 
 	lea rdi, [rel str_msg_result] ; см. string_constants.asm
 	mov rsi, rbx

@@ -39,7 +39,7 @@ _main:
 		jmp .return
 
 	.custom_exit:
-		lea rdi, [rel rdx]
+		mov rdi, rdx
 		call _printf
 
 	.return:
