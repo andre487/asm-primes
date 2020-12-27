@@ -1,16 +1,19 @@
-ifdef SystemRoot
-   format = win32
-   rm = del
-   ext = .exe
+UNAME_S = $(shell uname -s)
+$(info UNAME_S: $(UNAME_S))
+
+ifeq ($(UNAME_S), Darwin)
+	platform = MacOS
+	format = macho64
+else ifeq ($(UNAME_S), Linux)
+	platform = Linux
+	format = elf64
 else
-   format = elf
-   rm = rm -f
-   ext = 
+	$(error Unsupported platform)
 endif
 
-all: primes.o
-	gcc primes.o -o primes$(ext)
-	$(rm) primes.o
+all: .build
+	nasm -f $(format) main.asm -o .build/primes.o
+	$(GCC) .build/primes.o -o .build/primes
 
-primes.o:
-	nasm -f $(format) main.asm -o primes.o
+.build:
+	mkdir -p .build
