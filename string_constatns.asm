@@ -1,9 +1,9 @@
-;форматы ввода-вывода
+;С„РѕСЂРјР°С‚С‹ РІРІРѕРґР°-РІС‹РІРѕРґР°
 str_unsigned_int_format: db "%u", 0
 str_unsigned_long_long_format: db "%llu", 0
 str_cr_lf: db 0xD, 0xA, 0
 	
-;сообщения выхода
+;СЃРѕРѕР±С‰РµРЅРёСЏ РІС‹С…РѕРґР°
 str_exit_success: db "Success!", 0xD, 0xA, 0
 str_error_max_num_too_little: db "Max number is too little!", 0xD, 0xA, 0
 str_error_max_num_too_big: db "Max number is too big!", 0xD, 0xA, 0

@@ -1,26 +1,26 @@
 ;
 ;
-; ФУНКЦИИ
-; Cтатус выполнения записывается в EDX.
-; В случае успеха EDX содержит значение SUCCESS (0),
-; инчае - адрес сообщения об ошибке.
+; Р¤РЈРќРљР¦РР
+; CС‚Р°С‚СѓСЃ РІС‹РїРѕР»РЅРµРЅРёСЏ Р·Р°РїРёСЃС‹РІР°РµС‚СЃСЏ РІ EDX.
+; Р’ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС…Р° EDX СЃРѕРґРµСЂР¶РёС‚ Р·РЅР°С‡РµРЅРёРµ SUCCESS (0),
+; РёРЅС‡Р°Рµ - Р°РґСЂРµСЃ СЃРѕРѕР±С‰РµРЅРёСЏ РѕР± РѕС€РёР±РєРµ.
 ;
 ;
 
-; Ввести максимальное число
-; Результат записывается в переменную max_number
+; Р’РІРµСЃС‚Рё РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ С‡РёСЃР»Рѕ
+; Р РµР·СѓР»СЊС‚Р°С‚ Р·Р°РїРёСЃС‹РІР°РµС‚СЃСЏ РІ РїРµСЂРµРјРµРЅРЅСѓСЋ max_number
 input_max_number:
-	;создать стек-фрейм,
-	;0 байт для локальных переменных
+	;СЃРѕР·РґР°С‚СЊ СЃС‚РµРє-С„СЂРµР№Рј,
+	;0 Р±Р°Р№С‚ РґР»СЏ Р»РѕРєР°Р»СЊРЅС‹С… РїРµСЂРµРјРµРЅРЅС‹С…
 	enter 0, 1
 
-	;вызываем scanf
+	;РІС‹Р·С‹РІР°РµРј scanf
 	push max_number
-	push str_unsigned_int_format ;см. string_constants.asm
+	push str_unsigned_int_format ;СЃРј. string_constants.asm
 	call _scanf
 	add esp, 8
 	
-	;проверка
+	;РїСЂРѕРІРµСЂРєР°
 	mov eax, [max_number]
 	cmp eax, MIN_MAX_NUMBER
 	jb .number_too_little
@@ -29,13 +29,13 @@ input_max_number:
 	ja .number_too_big
 	jmp .success
 
-	;выход
+	;РІС‹С…РѕРґ
 	.number_too_little:
-		mov edx, str_error_max_num_too_little ;см. string_constants.asm
+		mov edx, str_error_max_num_too_little ;СЃРј. string_constants.asm
 		jmp .return	
 		
 	.number_too_big:
-		mov edx, str_error_max_num_too_big ;см. string_constants.asm
+		mov edx, str_error_max_num_too_big ;СЃРј. string_constants.asm
 		jmp .return	
 
 	.success:
@@ -46,13 +46,13 @@ input_max_number:
 		ret
 
 
-; Выделить память для массива флагов
-; Результат, указатель на массив флагов, 
-; записывается в переменную primes_pointer
+; Р’С‹РґРµР»РёС‚СЊ РїР°РјСЏС‚СЊ РґР»СЏ РјР°СЃСЃРёРІР° С„Р»Р°РіРѕРІ
+; Р РµР·СѓР»СЊС‚Р°С‚, СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РјР°СЃСЃРёРІ С„Р»Р°РіРѕРІ, 
+; Р·Р°РїРёСЃС‹РІР°РµС‚СЃСЏ РІ РїРµСЂРµРјРµРЅРЅСѓСЋ primes_pointer
 allocate_flags_memory:
 	enter 0, 1
 
-	;выделить max_number+1 байт
+	;РІС‹РґРµР»РёС‚СЊ max_number+1 Р±Р°Р№С‚
 	mov eax, [max_number]
 	inc eax
 	
@@ -60,12 +60,12 @@ allocate_flags_memory:
 	call _malloc
 	add esp, 4
 	
-	;проверка
+	;РїСЂРѕРІРµСЂРєР°
 	cmp eax, 0
 	je .fail
 	mov [primes_pointer], eax
 	
-	;инициализация
+	;РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ
 	mov byte [eax], 0
 	mov byte [eax+1], 0
 	
@@ -80,11 +80,11 @@ allocate_flags_memory:
 		cmp edi, edx
 		jb .write_true
 	
-	;выход
+	;РІС‹С…РѕРґ
 	jmp .success
 	
 	.fail:
-		mov edx, str_error_malloc_failed ;см. string_constants.asm
+		mov edx, str_error_malloc_failed ;СЃРј. string_constants.asm
 		jmp .return
 	
 	.success:
@@ -94,7 +94,7 @@ allocate_flags_memory:
 		leave
 		ret
 
-; Освободить память от массива флагов
+; РћСЃРІРѕР±РѕРґРёС‚СЊ РїР°РјСЏС‚СЊ РѕС‚ РјР°СЃСЃРёРІР° С„Р»Р°РіРѕРІ
 free_flags_memory:
 	enter 0, 1
 	
@@ -107,7 +107,7 @@ free_flags_memory:
 	ret
 	
 	
-;Найти простые числа с помощью решета Эратосфена
+;РќР°Р№С‚Рё РїСЂРѕСЃС‚С‹Рµ С‡РёСЃР»Р° СЃ РїРѕРјРѕС‰СЊСЋ СЂРµС€РµС‚Р° Р­СЂР°С‚РѕСЃС„РµРЅР°
 find_primes_with_eratosthenes_sieve:
 	enter 4, 1
 	
@@ -117,10 +117,10 @@ find_primes_with_eratosthenes_sieve:
 	mov [ebp-4], eax
 	lea eax, [ebx+1]
 	
-	;вычеркиваем составные числа
+	;РІС‹С‡РµСЂРєРёРІР°РµРј СЃРѕСЃС‚Р°РІРЅС‹Рµ С‡РёСЃР»Р°
 	cld
 	mov edx, 2 ;p = 2
-	mov ecx, 2 ;множитель с = 2
+	mov ecx, 2 ;РјРЅРѕР¶РёС‚РµР»СЊ СЃ = 2
 	.strike_out_cycle:
 		;x = c*p
 		mov eax, edx
@@ -167,13 +167,13 @@ find_primes_with_eratosthenes_sieve:
 		ret
 		
 
-; Вывести простые числа
+; Р’С‹РІРµСЃС‚Рё РїСЂРѕСЃС‚С‹Рµ С‡РёСЃР»Р°
 print_primes_sum:
 	enter 0, 1
 
 	cld
 	mov eax, [primes_pointer]
-	lea esi, [eax+2] ;начинаем проверку с адреса, по которому флаг числа 2
+	lea esi, [eax+2] ;РЅР°С‡РёРЅР°РµРј РїСЂРѕРІРµСЂРєСѓ СЃ Р°РґСЂРµСЃР°, РїРѕ РєРѕС‚РѕСЂРѕРјСѓ С„Р»Р°Рі С‡РёСЃР»Р° 2
 
 	lea edx, [eax+1]
 	add edx, [max_number]
@@ -196,7 +196,7 @@ print_primes_sum:
 			
 	push edi
 	push ebx
-	push str_unsigned_long_long_format ;см. string_constants.asm
+	push str_unsigned_long_long_format ;СЃРј. string_constants.asm
 	call _printf
 	add esp, 12
 
