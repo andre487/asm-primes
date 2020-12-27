@@ -2,7 +2,7 @@
 str_unsigned_int_format: db "%u", 0
 str_unsigned_long_long_format: db "%llu", 0
 str_cr_lf: db 0xD, 0xA, 0
-	
+
 ;сообщения выхода
 str_exit_success: db "Success!", 0xD, 0xA, 0
 str_error_max_num_too_little: db "Max number is too little!", 0xD, 0xA, 0
