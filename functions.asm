@@ -1,33 +1,31 @@
 ;
-;
 ; ФУНКЦИИ
 ; Cтатус выполнения записывается в rdx.
 ; В случае успеха rdx содержит значение SUCCESS (0),
 ; инчае - адрес сообщения об ошибке.
 ;
-;
 
 ; Ввести максимальное число
 ; Результат записывается в переменную max_number
 input_max_number:
-	;создать стек-фрейм,
-	;0 байт для локальных переменных
+	; создать стек-фрейм,
+	; 0 байт для локальных переменных
 	enter 0, 1
 
-	;приглашение ко вводу максимального числа
+	; приглашение ко вводу максимального числа
 	push rbx
 	lea rdi, [rel str_msg_input_number]
 	call _printf
 	pop rbx
 
-	;вызываем scanf
-	push rbx ;выравнивание стека
-	lea rdi, [rel str_unsigned_int_format] ;см. string_constants.asm
+	; вызываем scanf
+	push rbx ; выравнивание стека
+	lea rdi, [rel str_unsigned_int_format] ; см. string_constants.asm
 	lea rsi, [rel max_number]
 	call _scanf
 	pop rbx
 
-	;проверка
+	; проверка
 	cmp rsi, MIN_MAX_NUMBER
 	jb .number_too_little
 
@@ -35,13 +33,13 @@ input_max_number:
 	ja .number_too_big
 	jmp .success
 
-	;выход
+	; выход
 	.number_too_little:
-		lea rdx, [rel str_error_max_num_too_little] ;см. string_constants.asm
+		lea rdx, [rel str_error_max_num_too_little] ; см. string_constants.asm
 		jmp .return
 
 	.number_too_big:
-		lea rdx, [rel str_error_max_num_too_big] ;см. string_constants.asm
+		lea rdx, [rel str_error_max_num_too_big] ; см. string_constants.asm
 		jmp .return
 
 	.success:
@@ -57,7 +55,7 @@ input_max_number:
 allocate_flags_memory:
 	enter 0, 1
 
-	;выделить max_number+1 байт
+	; выделить max_number+1 байт
 	mov rdi, [rel max_number]
 	inc rdi
 
@@ -65,12 +63,12 @@ allocate_flags_memory:
 	call _malloc
 	pop rbx
 
-	;проверка
+	; проверка
 	cmp rax, 0
 	je .fail
 	mov [rel primes_pointer], rax
 
-	;инициализация
+	; инициализация
 	mov byte [rax], 0
 	mov byte [rax+1], 0
 
@@ -85,11 +83,11 @@ allocate_flags_memory:
 		cmp rdi, rdx
 		jb .write_true
 
-	;выход
+	; выход
 	jmp .success
 
 	.fail:
-		lea rdx, [rel str_error_malloc_failed] ;см. string_constants.asm
+		lea rdx, [rel str_error_malloc_failed] ; см. string_constants.asm
 		jmp .return
 
 	.success:
@@ -112,7 +110,7 @@ free_flags_memory:
 	ret
 
 
-;Найти простые числа с помощью решета Эратосфена
+; Найти простые числа с помощью решета Эратосфена
 find_primes_with_eratosthenes_sieve:
 	enter 8, 1
 
@@ -120,14 +118,14 @@ find_primes_with_eratosthenes_sieve:
 	mov rbx, [rel max_number]
 
 	mov [rel rbp-8], rax
-	lea rax, [rel rbx+1] ;адрес останова?
+	lea rax, [rel rbx+1] ; адрес останова
 
-	;вычеркиваем составные числа
+	; вычеркиваем составные числа
 	cld
-	mov rdx, 2 ;p = 2
-	mov rcx, 2 ;множитель с = 2
+	mov rdx, 2 ; p = 2
+	mov rcx, 2 ; множитель с = 2
 	.strike_out_cycle:
-		;x = c*p
+		; x = c * p
 		mov rax, rdx
 		mov rsi, rdx
 		mul rcx
@@ -141,7 +139,7 @@ find_primes_with_eratosthenes_sieve:
 			mov rdi, [rel rbp-8]
 			add rdi, rax
 			mov byte [rel rdi], 0
-			inc rcx ;c = c + 1
+			inc rcx ; c = c + 1
 			jmp .strike_out_cycle
 
 		.increase_p:
@@ -178,7 +176,7 @@ print_primes_sum:
 
 	cld
 	mov rax, [rel primes_pointer]
-	lea rsi, [rel rax+2] ;начинаем проверку с адреса, по которому флаг числа 2
+	lea rsi, [rel rax+2] ; начинаем проверку с адреса, по которому флаг числа 2
 
 	lea rdx, [rel rax+1]
 	add rdx, [rel max_number]
@@ -201,7 +199,7 @@ print_primes_sum:
 
 	push rdi
 
-	lea rdi, [rel str_msg_result] ;см. string_constants.asm
+	lea rdi, [rel str_msg_result] ; см. string_constants.asm
 	mov rsi, rbx
 	push rbx
 	call _printf

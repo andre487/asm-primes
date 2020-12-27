@@ -12,26 +12,26 @@ SECTION .text
 _main:
 	enter 0, 0
 
-	;ввод максимального числа
+	; ввод максимального числа
 	call input_max_number
 	cmp rdx, SUCCESS
 	jne .custom_exit
 
-	;выделяем память для массива флагов
+	; выделяем память для массива флагов
 	call allocate_flags_memory
 	cmp rdx, SUCCESS
 	jne .custom_exit
 
-	;отсеять составные числа
+	; отсеять составные числа
 	call find_primes_with_eratosthenes_sieve
 
-	;вывести числа
+	; вывести числа
 	call print_primes_sum
 
-	;освободить память от массива флагов
+	; освободить память от массива флагов
 	call free_flags_memory
 
-	;выход
+	; выход
 	.success:
 		lea rdi, [rel str_exit_success]
 		call _printf
