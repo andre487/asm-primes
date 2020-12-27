@@ -34,12 +34,12 @@ _main:
 
 	;выход
 	.success:
-		push str_exit_success
+		mov rdi, str_exit_success
 		call _printf
 		jmp .return
 
 	.custom_exit:
-		push rdx
+		mov rdi, rdx
 		call _printf
 
 	.return:

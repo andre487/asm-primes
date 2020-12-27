@@ -13,7 +13,7 @@ endif
 
 all: .build
 	nasm -f $(format) main.asm -o .build/primes.o
-	$(GCC) .build/primes.o -o .build/primes
+	gcc .build/primes.o -o .build/primes
 
 .build:
 	mkdir -p .build
