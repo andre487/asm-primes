@@ -12,7 +12,7 @@ else
 endif
 
 all: .build
-	nasm -f $(format) main.asm -o .build/primes.o
+	nasm -g -f $(format) -l .build/primes.list -o .build/primes.o main.asm
 	gcc .build/primes.o -o .build/primes
 
 .build:

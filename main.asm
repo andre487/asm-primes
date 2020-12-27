@@ -9,7 +9,6 @@ extern _malloc
 extern _free
 
 SECTION .text
-align 4
 _main:
 	enter 0, 0
 
@@ -34,12 +33,13 @@ _main:
 
 	;выход
 	.success:
-		mov rdi, str_exit_success
+		lea rdi, [rel str_exit_success]
 		call _printf
+
 		jmp .return
 
 	.custom_exit:
-		mov rdi, rdx
+		lea rdi, [rel rdx]
 		call _printf
 
 	.return:
@@ -50,8 +50,7 @@ _main:
 	%include "functions.asm"
 
 SECTION .data
-	align 4
-	max_number: dd 0
-	primes_pointer: dd 0
+	max_number: dd qword 0
+	primes_pointer: dd qword 0
 
 	%include "string_constatns.asm"
