@@ -15,12 +15,12 @@ _main:
 
 	;ввод максимального числа
 	call input_max_number
-	cmp edx, SUCCESS
+	cmp rdx, SUCCESS
 	jne .custom_exit
 
 	;выделяем память для массива флагов
 	call allocate_flags_memory
-	cmp edx, SUCCESS
+	cmp rdx, SUCCESS
 	jne .custom_exit
 
 	;отсеять составные числа
@@ -39,11 +39,11 @@ _main:
 		jmp .return
 
 	.custom_exit:
-		push edx
+		push rdx
 		call _printf
 
 	.return:
-		mov eax, SUCCESS
+		mov rax, SUCCESS
 		leave
 		ret
 
