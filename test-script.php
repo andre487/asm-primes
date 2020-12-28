@@ -34,13 +34,13 @@ function doTestsSuite()
 
 function doTest($maxNum, $expectedOutput)
 {
-	exec("echo $maxNum | " . PROGRAM_NAME, $output);
+    exec("echo $maxNum | " . PROGRAM_NAME, $output);
 
     if (empty($output)) {
         return false;
-	}
+    }
 
-	print_r($output);
+    print_r($output);
 
     return (strcmp($output[1], "Result: $expectedOutput") == 0);
 }
