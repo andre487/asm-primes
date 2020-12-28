@@ -8,50 +8,49 @@ extern _scanf
 extern _malloc
 extern _free
 
-SECTION .text 
-align 4
+SECTION .text
 _main:
 	enter 0, 0
-	
-	;ввод максимального числа
+
+	; РІРІРѕРґ РјР°РєСЃРёРјР°Р»СЊРЅРѕРіРѕ С‡РёСЃР»Р°
 	call input_max_number
-	cmp edx, SUCCESS
+	cmp rdx, SUCCESS
 	jne .custom_exit
-	
-	;выделяем память для массива флагов
+
+	; РІС‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ РґР»СЏ РјР°СЃСЃРёРІР° С„Р»Р°РіРѕРІ
 	call allocate_flags_memory
-	cmp edx, SUCCESS
+	cmp rdx, SUCCESS
 	jne .custom_exit
-	
-	;отсеять составные числа
+
+	; РѕС‚СЃРµСЏС‚СЊ СЃРѕСЃС‚Р°РІРЅС‹Рµ С‡РёСЃР»Р°
 	call find_primes_with_eratosthenes_sieve
-	
-	;вывести числа
+
+	; РІС‹РІРµСЃС‚Рё С‡РёСЃР»Р°
 	call print_primes_sum
-	
-	;освободить память от массива флагов
+
+	; РѕСЃРІРѕР±РѕРґРёС‚СЊ РїР°РјСЏС‚СЊ РѕС‚ РјР°СЃСЃРёРІР° С„Р»Р°РіРѕРІ
 	call free_flags_memory
-	
-	;выход
+
+	; РІС‹С…РѕРґ
 	.success:
-		push str_exit_success
+		lea rdi, [rel str_exit_success]
 		call _printf
+
 		jmp .return
-			
+
 	.custom_exit:
-		push edx
+		mov rdi, rdx
 		call _printf
-		
+
 	.return:
-		mov eax, SUCCESS
+		mov rax, SUCCESS
 		leave
 		ret
-	
+
 	%include "functions.asm"
 
 SECTION .data
-	align 4
-	max_number: dd 0
-	primes_pointer: dd 0
-	
+	max_number: dd qword 0
+	primes_pointer: dd qword 0
+
 	%include "string_constatns.asm"

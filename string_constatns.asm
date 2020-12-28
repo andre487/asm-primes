@@ -1,9 +1,12 @@
-;форматы ввода-вывода
-str_unsigned_int_format: db "%u", 0
-str_unsigned_long_long_format: db "%llu", 0
-str_cr_lf: db 0xD, 0xA, 0
-	
-;сообщения выхода
+; С„РѕСЂРјР°С‚С‹ РІРІРѕРґР°-РІС‹РІРѕРґР°
+str_unsigned_int_format: db "%llu", 0
+
+; СЃРѕРѕР±С‰РµРЅРёСЏ РґР»СЏ СЂР°Р±РѕС‚С‹ РїСЂРѕРіСЂР°РјРјС‹
+str_msg_max_number: db "Max number: %llu", 0xD, 0xA, 0
+str_msg_result: db "Result: %llu", 0xD, 0xA, 0
+str_msg_input_number: db "Input max number [3,4294967294), not included in sum: ", 0
+
+; СЃРѕРѕР±С‰РµРЅРёСЏ РІС‹С…РѕРґР°
 str_exit_success: db "Success!", 0xD, 0xA, 0
 str_error_max_num_too_little: db "Max number is too little!", 0xD, 0xA, 0
 str_error_max_num_too_big: db "Max number is too big!", 0xD, 0xA, 0

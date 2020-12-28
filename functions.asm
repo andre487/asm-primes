@@ -1,208 +1,219 @@
 ;
-;
-; ФУНКЦИИ
-; Cтатус выполнения записывается в EDX.
-; В случае успеха EDX содержит значение SUCCESS (0),
-; инчае - адрес сообщения об ошибке.
-;
+; Р¤РЈРќРљР¦РР
+; CС‚Р°С‚СѓСЃ РІС‹РїРѕР»РЅРµРЅРёСЏ Р·Р°РїРёСЃС‹РІР°РµС‚СЃСЏ РІ rdx.
+; Р’ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС…Р° rdx СЃРѕРґРµСЂР¶РёС‚ Р·РЅР°С‡РµРЅРёРµ SUCCESS (0),
+; РёРЅС‡Р°Рµ - Р°РґСЂРµСЃ СЃРѕРѕР±С‰РµРЅРёСЏ РѕР± РѕС€РёР±РєРµ.
 ;
 
-; Ввести максимальное число
-; Результат записывается в переменную max_number
+; Р’РІРµСЃС‚Рё РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ С‡РёСЃР»Рѕ
+; Р РµР·СѓР»СЊС‚Р°С‚ Р·Р°РїРёСЃС‹РІР°РµС‚СЃСЏ РІ РїРµСЂРµРјРµРЅРЅСѓСЋ max_number
 input_max_number:
-	;создать стек-фрейм,
-	;0 байт для локальных переменных
+	; СЃРѕР·РґР°С‚СЊ СЃС‚РµРє-С„СЂРµР№Рј,
+	; 0 Р±Р°Р№С‚ РґР»СЏ Р»РѕРєР°Р»СЊРЅС‹С… РїРµСЂРµРјРµРЅРЅС‹С…
 	enter 0, 1
 
-	;вызываем scanf
-	push max_number
-	push str_unsigned_int_format ;см. string_constants.asm
+	; РїСЂРёРіР»Р°С€РµРЅРёРµ РєРѕ РІРІРѕРґСѓ РјР°РєСЃРёРјР°Р»СЊРЅРѕРіРѕ С‡РёСЃР»Р°
+	lea rdi, [rel str_msg_input_number]
+	push rbx
+	call _printf
+	pop rbx
+
+	; РІС‹Р·С‹РІР°РµРј scanf
+	lea rdi, [rel str_unsigned_int_format] ; СЃРј. string_constants.asm
+	lea rsi, [rel max_number]
+	push rbx ; РІС‹СЂР°РІРЅРёРІР°РЅРёРµ СЃС‚РµРєР°
 	call _scanf
-	add esp, 8
-	
-	;проверка
-	mov eax, [max_number]
-	cmp eax, MIN_MAX_NUMBER
+	pop rbx
+
+	jo .number_too_big
+
+	; РїСЂРѕРІРµСЂРєР°
+	mov rax, [rel max_number]
+	cmp rax, MIN_MAX_NUMBER
 	jb .number_too_little
 
-	cmp eax, MAX_MAX_NUMBER
+	cmp rax, MAX_MAX_NUMBER
 	ja .number_too_big
+
 	jmp .success
 
-	;выход
+	; РІС‹С…РѕРґ
 	.number_too_little:
-		mov edx, str_error_max_num_too_little ;см. string_constants.asm
-		jmp .return	
-		
+		lea rdx, [rel str_error_max_num_too_little] ; СЃРј. string_constants.asm
+		jmp .return
+
 	.number_too_big:
-		mov edx, str_error_max_num_too_big ;см. string_constants.asm
-		jmp .return	
+		lea rdx, [rel str_error_max_num_too_big] ; СЃРј. string_constants.asm
+		jmp .return
 
 	.success:
-		mov edx, SUCCESS
-	
+		lea rdi, [rel str_msg_max_number]
+		mov rsi, [rel max_number]
+		push rbx
+		call _printf
+		pop rbx
+
+		mov rdx, SUCCESS
+
 	.return:
 		leave
 		ret
 
 
-; Выделить память для массива флагов
-; Результат, указатель на массив флагов, 
-; записывается в переменную primes_pointer
+; Р’С‹РґРµР»РёС‚СЊ РїР°РјСЏС‚СЊ РґР»СЏ РјР°СЃСЃРёРІР° С„Р»Р°РіРѕРІ
+; Р РµР·СѓР»СЊС‚Р°С‚, СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РјР°СЃСЃРёРІ С„Р»Р°РіРѕРІ,
+; Р·Р°РїРёСЃС‹РІР°РµС‚СЃСЏ РІ РїРµСЂРµРјРµРЅРЅСѓСЋ primes_pointer
 allocate_flags_memory:
 	enter 0, 1
 
-	;выделить max_number+1 байт
-	mov eax, [max_number]
-	inc eax
-	
-	push eax
+	; РІС‹РґРµР»РёС‚СЊ max_number+1 Р±Р°Р№С‚
+	mov rdi, [rel max_number]
+	inc rdi
+
+	push rbx
 	call _malloc
-	add esp, 4
-	
-	;проверка
-	cmp eax, 0
+	pop rbx
+
+	; РїСЂРѕРІРµСЂРєР°
+	cmp rax, 0
 	je .fail
-	mov [primes_pointer], eax
-	
-	;инициализация
-	mov byte [eax], 0
-	mov byte [eax+1], 0
-	
+	mov [rel primes_pointer], rax
+
+	; РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ
+	mov byte [rax], 0
+
 	cld
-	lea edi, [eax+2]
-	mov edx, [max_number]
-	add edx, eax
-	
+	lea rdi, [rel rax+2]
+	mov rdx, [rel max_number]
+	add rdx, rax
+
 	mov al, 1
 	.write_true:
 		stosb
-		cmp edi, edx
+		cmp rdi, rdx
 		jb .write_true
-	
-	;выход
+
+	; РІС‹С…РѕРґ
 	jmp .success
-	
+
 	.fail:
-		mov edx, str_error_malloc_failed ;см. string_constants.asm
+		lea rdx, [rel str_error_malloc_failed] ; СЃРј. string_constants.asm
 		jmp .return
-	
+
 	.success:
-		mov edx, SUCCESS
-			
+		mov rdx, SUCCESS
+
 	.return:
 		leave
 		ret
 
-; Освободить память от массива флагов
+
+; РћСЃРІРѕР±РѕРґРёС‚СЊ РїР°РјСЏС‚СЊ РѕС‚ РјР°СЃСЃРёРІР° С„Р»Р°РіРѕРІ
 free_flags_memory:
 	enter 0, 1
-	
-	mov eax, [primes_pointer]
-	push eax
+
+	mov rdi, [rel primes_pointer]
+	push rbx
 	call _free
-	add esp, 4
-	
+	pop rbx
+
 	leave
 	ret
-	
-	
-;Найти простые числа с помощью решета Эратосфена
+
+
+; РќР°Р№С‚Рё РїСЂРѕСЃС‚С‹Рµ С‡РёСЃР»Р° СЃ РїРѕРјРѕС‰СЊСЋ СЂРµС€РµС‚Р° Р­СЂР°С‚РѕСЃС„РµРЅР°
 find_primes_with_eratosthenes_sieve:
-	enter 4, 1
-	
-	mov eax, [primes_pointer]
-	mov ebx, [max_number]
-	
-	mov [ebp-4], eax
-	lea eax, [ebx+1]
-	
-	;вычеркиваем составные числа
+	enter 8, 1
+
+	mov rax, [rel primes_pointer]
+	mov rbx, [rel max_number]
+
+	mov [rel rbp-8], rax
+	lea rax, [rel rbx+1] ; Р°РґСЂРµСЃ РѕСЃС‚Р°РЅРѕРІР°
+
+	; РІС‹С‡РµСЂРєРёРІР°РµРј СЃРѕСЃС‚Р°РІРЅС‹Рµ С‡РёСЃР»Р°
 	cld
-	mov edx, 2 ;p = 2
-	mov ecx, 2 ;множитель с = 2
+	mov rdx, 2 ; p = 2
+	mov rcx, 2 ; РјРЅРѕР¶РёС‚РµР»СЊ СЃ = 2
 	.strike_out_cycle:
-		;x = c*p
-		mov eax, edx
-		mov esi, edx
-		mul ecx
-		mov edx, esi
-		
-		cmp eax, ebx
+		; x = c * p
+		mov rax, rdx
+		mov rsi, rdx
+		mul rcx
+		mov rdx, rsi
+
+		cmp rax, rbx
 		jbe .strike_out_number
 		jmp .increase_p
-		
+
 		.strike_out_number:
-			mov edi, [ebp-4]
-			add edi, eax
-			mov byte [edi], 0
-			inc ecx ;c = c + 1
+			mov rdi, [rel rbp-8]
+			add rdi, rax
+			mov byte [rel rdi], 0
+			inc rcx ; c = c + 1
 			jmp .strike_out_cycle
-			
+
 		.increase_p:
-			mov esi, [ebp-4]
-			add esi, edx
-			inc esi
-			
-			lea ecx, [edx+1]
+			mov rsi, [rel rbp-8]
+			add rsi, rdx
+			inc rsi
+
+			lea rcx, [rel rdx+1]
 			.check_current_number:
-				mov eax, ecx
-				mul eax
-				cmp eax, ebx
+				mov rax, rcx
+				mul rax
+				cmp rax, rbx
 				ja .return
-			
+
 				lodsb
-				inc ecx
+				inc rcx
 				cmp al, 0
 				jne .new_p_found
 				jmp .check_current_number
-			
+
 				.new_p_found:
-					lea edx, [ecx-1]
-					mov ecx, 2
-					jmp .strike_out_cycle			
-	
+					lea rdx, [rcx-1]
+					mov rcx, 2
+					jmp .strike_out_cycle
+
 	.return:
 		leave
 		ret
-		
 
-; Вывести простые числа
+
+; Р’С‹РІРµСЃС‚Рё РїСЂРѕСЃС‚С‹Рµ С‡РёСЃР»Р°
 print_primes_sum:
 	enter 0, 1
 
+	mov rax, [rel primes_pointer]
+	lea rsi, [rel rax+2] ; РЅР°С‡РёРЅР°РµРј РїСЂРѕРІРµСЂРєСѓ СЃ Р°РґСЂРµСЃР°, РїРѕ РєРѕС‚РѕСЂРѕРјСѓ С„Р»Р°Рі С‡РёСЃР»Р° 2
+
+	lea rdx, [rel rax+1]
+	add rdx, [rel max_number]
+
+	xor rbx, rbx
+	xor rdi, rdi
+	mov rcx, 2
+
 	cld
-	mov eax, [primes_pointer]
-	lea esi, [eax+2] ;начинаем проверку с адреса, по которому флаг числа 2
-
-	lea edx, [eax+1]
-	add edx, [max_number]
-
-	xor ebx, ebx
-	xor edi, edi
-	mov ecx, 2
 	.sum_cycle:
 		lodsb
-		cmp al, 0
-		jne .sum
+		cmp al, 1
+		je .sum
 		jmp .check_finish
 		.sum:
-			add ebx, ecx
-			adc edi, 0
+			add rbx, rcx
+			adc rdi, 0
 		.check_finish:
-			inc ecx
-			cmp esi, edx
+			inc rcx
+			cmp rsi, rdx
 			jb .sum_cycle
-			
-	push edi
-	push ebx
-	push str_unsigned_long_long_format ;см. string_constants.asm
-	call _printf
-	add esp, 12
 
-	push str_cr_lf
+	lea rdi, [rel str_msg_result] ; СЃРј. string_constants.asm
+	mov rsi, rbx
+	push rbx
 	call _printf
-	add esp, 4
+	pop rbx
 
 	leave
 	ret
