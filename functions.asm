@@ -81,7 +81,6 @@ allocate_flags_memory:
 
 	; инициализация
 	mov byte [rax], 0
-	mov byte [rax+1], 0
 
 	cld
 	lea rdi, [rel rax+2]
@@ -186,7 +185,6 @@ find_primes_with_eratosthenes_sieve:
 print_primes_sum:
 	enter 0, 1
 
-	cld
 	mov rax, [rel primes_pointer]
 	lea rsi, [rel rax+2] ; начинаем проверку с адреса, по которому флаг числа 2
 
@@ -196,10 +194,12 @@ print_primes_sum:
 	xor rbx, rbx
 	xor rdi, rdi
 	mov rcx, 2
+
+	cld
 	.sum_cycle:
 		lodsb
-		cmp al, 0
-		jne .sum
+		cmp al, 1
+		je .sum
 		jmp .check_finish
 		.sum:
 			add rbx, rcx
